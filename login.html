@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+        input[type=text], input[type=password] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        .gnome-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: url('4055220-middle.png') no-repeat;
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+            border: none;
+            cursor: pointer;
+        }
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .blur-background {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .error-message {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body> 
+    <div class="container">
+        <form id="login-form" action="/login" method="post">
+            <label for="username"><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="username" required>
+    
+            <label for="password"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="password" required>
+    
+            <button type="submit">Login</button>
+        </form>
+        <p class="error-message">Invalid username or password</p>
+    </div>
+    <button class="gnome-button" onclick="openAdminPanel()"></button>
+    <div class="blur-background" onclick="closeAdminPanel()"></div>
+    <div class="admin-panel">
+        <form action="/create-user" method="post">
+            <label for="username"><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="username" required>
+            <label for="password"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="password" required>
+            <button type="submit">Create User</button>
+        </form>
+        <button onclick="closeAdminPanel()">X</button>
+    </div>
+    <script>
+        function openAdminPanel() {
+            document.querySelector('.admin-panel').style.display = 'block';
+            document.querySelector('.blur-background').style.display = 'block';
+        }
+        function closeAdminPanel() {
+            document.querySelector('.admin-panel').style.display = 'none';
+            document.querySelector('.blur-background').style.display = 'none';
+        }
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(new FormData(event.target)),
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    window.location.href = '/login-successful.html';
+                } else {
+                    document.querySelector('.error-message').style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
